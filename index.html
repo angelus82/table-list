@@ -2,7 +2,6 @@
     <head>
         <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
         <link rel="stylesheet" href="assets/css/global.css">
-        <script src="assets/js/main.js"></script>
     </head>
     <body>
         <div id="main">
@@ -12,20 +11,33 @@
 
             <div id="left-panel">
                 <table>
-                    <head>
+                    <thead>
                         <tr>
                             <th># Num</th>
                             <th>Photo</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Age</th>
+                            <th>-</th>
                         </tr>
-                    </head>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>-</td>
+                            <td>Damir</td>
+                            <td>Secki</td>
+                            <td>40</td>
+                            <td><button onclick="removeME(event)">X</button></td>
+                        </tr>
+                    </tbody>
                 </table>
+                <br>
+                <button class="button red" onclick="deleteAll()">Delete All</button>
             </div>
 
             <div id="right-panel">
-                <form>
+                <form onsubmit="insertData(); return false;" name="form">
                     <p>Please enter the user's information</p>
                     
                     <h5>First name</h5>
@@ -37,9 +49,10 @@
                     <h5>Age</h5>
                     <input type="text" name="age">
 
-                    <input id="submit_btn" type="submit" value="Save">
+                    <input id="submit_btn" class="button" type="submit" value="Save">
                 </form>
             </div>
         </div>
     </body>
+    <script src="assets/js/main.js"></script>
 </html>
