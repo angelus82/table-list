@@ -43,6 +43,8 @@ h1{
     cursor: pointer;
 }
 
+
+/* ----- RED ----- */
 .button.red{
     background: maroon;
     color: white;
@@ -53,12 +55,34 @@ h1{
     cursor: pointer;
 }
 
+/* ----- GREEN ----- */
+.button.green{
+    background: rgb(11, 111, 17);
+    color: white;
+}
+
+.button.green:hover{
+    background-color: rgb(16, 88, 25);
+    cursor: pointer;
+}
+
+/* ----- GREY ----- */
+.button.grey{
+    background: rgb(150, 150, 150);
+    color: white;
+}
+
+.button.grey:hover{
+    background-color: rgb(120, 120, 120);
+    cursor: pointer;
+}
+
 /* ========================================================= */
 /* ====================== LEFT PANEL ====================== */
 /* ========================================================= */
 
 #left-panel{
-    background: #ebeaea;
+    background: #ebebeb;
     width: 70%;
     height: 94%;
     float: left;
@@ -83,12 +107,30 @@ h1{
 #left-panel table td{
     text-align: center;
     padding: 2px 10px;
+    background: #ebebeb;
+}
+
+#left-panel table tr:nth-child(even) td{
+    background: #e3e3e3;
 }
 
 #left-panel table td:nth-child(3), #left-panel table td:nth-child(4){
     text-align: left;
 }
 
+#left-panel table tr:hover td {
+    background: #dddddd;
+}
+
+#left-panel table tr:nth-child(even):hover td{
+    background: #d3d3d3;
+}
+
+#left-panel table tr.edit td,
+#left-panel table tr.edit:hover td {
+    background: rgb(11, 111, 17);
+    color: white;
+}
 
 /* ========================================================= */
 /* ====================== RIGHT PANEL ====================== */
@@ -100,6 +142,11 @@ h1{
     height: 94%;
     float: left;
     padding: 20px;
+}
+
+#right-panel form .green,
+#right-panel form .grey {
+    display: none;
 }
 
 #right-panel form p{
@@ -123,6 +170,15 @@ h1{
 
 #right-panel form #submit_btn {
     width: auto;
+}
+
+#right-panel form.edit .green,
+#right-panel form.edit .grey{
+    display: inline-block;
+}
+
+#right-panel form.edit #submit_btn {
+    display: none;
 }
 
 
