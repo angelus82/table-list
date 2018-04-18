@@ -100,6 +100,16 @@ h1{
     padding: 2px 10px;
 }
 
+#left-panel table th.sortable:hover{
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2px 10px;
+}
+
+#left-panel table th.sorted, #left-panel table th.sorted:hover{
+    background-color: rgba(255, 166, 0, 0.6);
+}
+
 #left-panel table th:nth-child(3), #left-panel table th:nth-child(4){
     text-align: left;
 }
@@ -130,6 +140,15 @@ h1{
 #left-panel table tr.edit:hover td {
     background: rgb(11, 111, 17);
     color: white;
+}
+
+#left-panel table td.sorted, #left-panel table td.sorted:hover{
+    background-color: rgba(255, 166, 0, 0.1);
+}
+
+#left-panel table tr:nth-child(even) td.sorted,
+#left-panel table tr:nth-child(even) td.sorted:hover{
+    background-color: rgba(255, 166, 0, 0.2);
 }
 
 /* ========================================================= */
