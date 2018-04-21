@@ -26,11 +26,11 @@
                     </tbody>
                 </table>
                 <br>
-                <button class="button red" onclick="deleteAll()">Delete All</button>
+                <button class="button red" onclick="TableHTML.empty()">Delete All</button>
             </div>
 
             <div id="right-panel">
-                <form onsubmit="insertData(); return false;" name="form">
+                <form onsubmit="TableHTML.insert(); return false;" name="form">
                     <p>Please enter the user's information</p>
                     
                     <h5>First name</h5>
@@ -49,5 +49,5 @@
             </div>
         </div>
     </body>
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main-new.js"></script>
 </html>

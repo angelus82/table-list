@@ -54,6 +54,7 @@ function deleteAll(){
 function removeME(event) {
     var me = event.target.parentNode.parentNode;
     tableEl.removeChild(me);
+    cancelUpdate();
     getDATA();
     event.stopPropagation();
 }
@@ -70,20 +71,24 @@ function editME(event) {
 
     me.classList.add('edit');
 
-    var id = me.getElementsByTagName('TD')[0].innerHTML;
-    var dataItem = {
-        id: me.getElementsByTagName('TD')[0].innerHTML,
-        firstName: me.getElementsByTagName('TD')[2].innerHTML,
-        lastName: me.getElementsByTagName('TD')[3].innerHTML,
-        age: me.getElementsByTagName('TD')[4].innerHTML
-    };
-    console.log(dataItem);
-    document.form.reset();
-    document.form.classList.add('edit');
-    
-    firstName.value = dataItem.firstName;
-    lastName.value = dataItem.lastName;
-    age.value = dataItem.age;
+    var idCellEl = me.getElementsByTagName('TD')[0];
+
+    if(!!idCellEl) {
+        var id = idCellEl.innerHTML;
+        var dataItem = {
+            id: me.getElementsByTagName('TD')[0].innerHTML,
+            firstName: me.getElementsByTagName('TD')[2].innerHTML,
+            lastName: me.getElementsByTagName('TD')[3].innerHTML,
+            age: me.getElementsByTagName('TD')[4].innerHTML
+        };
+        console.log(dataItem);
+        document.form.reset();
+        document.form.classList.add('edit');
+        
+        firstName.value = dataItem.firstName;
+        lastName.value = dataItem.lastName;
+        age.value = dataItem.age;
+    }
 }
 
 function cancelUpdate(){
@@ -206,9 +211,11 @@ function sortData(sortBy, event) {
             }
         }
         column = 0;
-        while( (sortedCol = sortedCol.previousSibling) != null )  {
-            if (sortedCol.nodeName === 'TH') {
-                column++;
+        if (!!sortedCol) {
+            while( (sortedCol = sortedCol.previousSibling) != null )  {
+                if (sortedCol.nodeName === 'TH') {
+                    column++;
+                }
             }
         }
     }
