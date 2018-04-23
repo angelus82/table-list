@@ -28,6 +28,7 @@ var TableData = {
     },
     edit: function(id, obj){
         for(var i = 0; i < this.data.length; i++) {
+
             if (this.data[i].id === id) {
                 var item = this.data[i];
                 //edit data
@@ -35,6 +36,8 @@ var TableData = {
                 for (var j = 0; j < properties.length; j++) {   
                     var value = obj[properties[j]];
                     var property = properties[j];
+
+                    console.log('PROPERTY: ' + property, 'VALUE: ' + value);
 
                     if (!!item[property]) {
                         item[property] = value;
@@ -50,6 +53,19 @@ var TableData = {
         }
         this._order = property;
     },
+    reorder(){
+        if (!!this._order){
+            this.orderBy(this._order, true);
+        }
+    },
+    findById: function(id) {
+        for(var i = 0; i < this.data.length; i++) {
+            if (this.data[i].id === id) {
+                return this.data[i];
+            }
+        }
+        return null;
+    },
     /* ------- PRIVATE FUNCTIONS ------------*/
     _getNextId: function() {
 
@@ -61,6 +77,9 @@ var TableData = {
         }
 
         return maxId + 1;
+    },
+    _sort_id: function(a, b) {
+        return a.id - b.id;
     },
     _sort_age: function(a, b) {
         return a.age - b.age;
@@ -89,9 +108,55 @@ var FormHTML = {
     firstNameEl: document.form.elements.first_name,
     lastNameEl: document.form.elements.last_name,
     ageEl: document.form.elements.age,
+    idEl: document.form.elements.id,
     empty: function(){
         this.formEl.reset();
+        this.formEl.classList.remove('edit');
         this.firstNameEl.focus();
+    },
+    populateId: function(id) {
+        var dataItem = TableData.findById(id);
+
+        this.formEl.reset();
+        this.formEl.classList.add('edit');
+        
+        this.firstNameEl.value = dataItem.firstName;
+        this.lastNameEl.value = dataItem.lastName;
+        this.ageEl.value = dataItem.age;
+        this.idEl.value = dataItem.id;
+    },
+    insert: function() {
+        var item = {
+            firstName: this.firstNameEl.value,
+            lastName: this.lastNameEl.value,
+            age: parseInt(this.ageEl.value, 10)
+        };
+
+        TableData.insert(item.firstName, item.lastName, item.age);
+
+        TableHTML.populate();
+        this.empty();
+    },
+    cancel: function() {
+        this.empty();
+        TableHTML.deselectAll();
+        return false;
+    },
+    update: function() {
+        var item = {
+            firstName: this.firstNameEl.value,
+            lastName: this.lastNameEl.value,
+            age: parseInt(this.ageEl.value, 10),
+            id: parseInt(this.idEl.value, 10)
+        };
+        console.log('ITEM ID:', item.id);
+        TableData.edit(item.id, item);
+        console.log(TableData.data);
+        this.empty();
+        TableData.reorder();
+        TableHTML.populate();
+
+        return false;
     }
 };
 
@@ -99,7 +164,7 @@ var TableHTML = {
     tableEl: document.querySelector('#left-panel > table > tbody'),
 
     empty: function(){
-        this.tableEl.innerHTML = '';
+        this._emptyHTMLTable();
         TableData.empty();
     },
     populate: function() {
@@ -108,6 +173,7 @@ var TableHTML = {
             var item = TableData.data[i];
             this._insertRow(item);
         }
+        FormHTML.empty();
     },
     insert: function() {
         var item = {
@@ -121,10 +187,31 @@ var TableHTML = {
         this.populate();
         FormHTML.empty();
     },
+    orderBy: function(property) {
+        this._emptyHTMLTable();
+        TableData.orderBy(property);
+        this.populate();
+    },
+    editRow: function(id, event) {
+        // POPULATE FORM
+        FormHTML.populateId(id);
+
+        // SELECT ACTIVE ROW IN THE TABLE
+        this.deselectAll();
+        var me = event.target.parentNode;
+        me.classList.add('edit');
+    },
+
+    deselectAll: function() {
+        var rows = this.tableEl.getElementsByTagName('TR');
+        for(var i = 0; i < rows.length; i++){
+            rows[i].classList.remove('edit');
+        }
+    },
 
     /* ------- PRIVATE FUNCTIONS ------------*/
     _insertRow: function(item) {
-        var row = `<tr onclick="editME(event)">
+        var row = `<tr onclick="TableHTML.editRow(` + item.id + `, event)">
             <td>` + item.id + `</td>
             <td>-</td>
             <td>` + item.firstName + `</td>
@@ -133,6 +220,9 @@ var TableHTML = {
             <td><button onclick="removeME(event)">X</button></td>
         </tr>`;
         this.tableEl.innerHTML =  this.tableEl.innerHTML + row;
+    },
+    _emptyHTMLTable(){
+        this.tableEl.innerHTML = '';
     }
 }
 

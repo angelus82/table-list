@@ -13,11 +13,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="sortable" onclick="sortData('id', event)"># Num</th>
+                            <th class="sortable" onclick="TableHTML.orderBy('id')"># Num</th>
                             <th>Photo</th>
-                            <th class="sortable" onclick="sortData('firstName', event)">First Name</th>
-                            <th class="sortable" onclick="sortData('lastName', event)">Last Name</th>
-                            <th class="sortable" onclick="sortData('age', event)">Age</th>
+                            <th class="sortable" onclick="TableHTML.orderBy('firstName')">First Name</th>
+                            <th class="sortable" onclick="TableHTML.orderBy('lastName')">Last Name</th>
+                            <th class="sortable" onclick="TableHTML.orderBy('age')">Age</th>
                             <th>-</th>
                         </tr>
                     </thead>
@@ -30,7 +30,7 @@
             </div>
 
             <div id="right-panel">
-                <form onsubmit="TableHTML.insert(); return false;" name="form">
+                <form onsubmit="FormHTML.insert(); return false;" name="form">
                     <p>Please enter the user's information</p>
                     
                     <h5>First name</h5>
@@ -42,9 +42,11 @@
                     <h5>Age</h5>
                     <input type="text" name="age">
 
+                    <input type="hidden" name="id">
+
                     <input id="submit_btn" class="button" type="submit" value="Insert">
-                    <button class="button grey" onclick="return cancelUpdate()">Cancel</button>
-                    <button class="button green" onclick="return updateItem()">Update</button>
+                    <button class="button grey" onclick="return FormHTML.cancel()">Cancel</button>
+                    <button class="button green" onclick="return FormHTML.update()">Update</button>
                 </form>
             </div>
         </div>
