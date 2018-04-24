@@ -77,6 +77,19 @@ h1{
     cursor: pointer;
 }
 
+/* ----- SMALL ----- */
+.button.small{
+    padding: 2px 5px !important;
+    font-size: 10px;
+}
+.button.action{
+    opacity: 0.2;
+}
+
+.button.action:hover{
+    opacity: 1;
+}
+
 /* ========================================================= */
 /* ====================== LEFT PANEL ====================== */
 /* ========================================================= */
@@ -130,16 +143,29 @@ h1{
 
 #left-panel table tr:hover td {
     background: #dddddd;
+    cursor: pointer;
 }
 
 #left-panel table tr:nth-child(even):hover td{
     background: #d3d3d3;
 }
 
+
+#left-panel table tr.delete td,
+#left-panel table tr.delete:hover td {
+    background: rgba(120, 3, 3, 0.653);
+    color: white;
+}
+
 #left-panel table tr.edit td,
 #left-panel table tr.edit:hover td {
     background: rgb(11, 111, 17);
     color: white;
+}
+
+#left-panel table tr.edit td .button.action,
+#left-panel table tr.delete td .button.action {
+    opacity: 1;
 }
 
 #left-panel table td.sorted, #left-panel table td.sorted:hover{
@@ -149,6 +175,10 @@ h1{
 #left-panel table tr:nth-child(even) td.sorted,
 #left-panel table tr:nth-child(even) td.sorted:hover{
     background-color: rgba(255, 166, 0, 0.2);
+}
+
+#left-panel table tr:hover .button.action {
+    opacity: 1;
 }
 
 /* ========================================================= */

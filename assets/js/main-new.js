@@ -202,10 +202,37 @@ var TableHTML = {
         me.classList.add('edit');
     },
 
+    removeRow: function(id, event) {
+        event.stopPropagation();
+
+        
+        var me = event.target.parentNode.parentNode;
+        if (me.nodeName === 'TR') {
+            this.deselectAll();
+            // SELECT ACTIVE ROW IN THE TABLE
+            me.classList.add('delete');
+            var self = this; 
+            window.setTimeout(function(){
+                var doRemove = confirm('Are you sure you want to delete row with ID: '+id + '?');
+
+                if(!doRemove) {
+                    self.deselectAll();
+                    return;
+                }                
+                // WE CAN DELETE
+                self.tableEl.removeChild(me);
+                TableData.delete(id);
+            }, 50);
+
+            
+        }
+    },
+
     deselectAll: function() {
         var rows = this.tableEl.getElementsByTagName('TR');
         for(var i = 0; i < rows.length; i++){
             rows[i].classList.remove('edit');
+            rows[i].classList.remove('delete');
         }
     },
 
@@ -217,7 +244,7 @@ var TableHTML = {
             <td>` + item.firstName + `</td>
             <td>` + item.lastName + `</td>
             <td>` + item.age + `</td>
-            <td><button onclick="removeME(event)">X</button></td>
+            <td><button onclick="TableHTML.removeRow(` + item.id + `,event)" class="button red small action">X</button></td>
         </tr>`;
         this.tableEl.innerHTML =  this.tableEl.innerHTML + row;
     },
