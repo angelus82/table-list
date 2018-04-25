@@ -240,15 +240,6 @@ var TableHTML = {
     },
 
     selectColumn: function(property) {
-        // var container = document.querySelector('#left-panel > table');
-
-        // var cells = container.querySelectorAll('.sorted');
-        // console.log(cells);
-        // if(!!cells){
-        //     for (var i = 0; i < cells.length; i++) {
-        //         cells[i].classList.remove('sorted');
-        //     }
-        // }
         var container = document.querySelector('#left-panel > table');
         var rows = container.getElementsByTagName('TR');
         window.setTimeout(function(){        
@@ -294,29 +285,48 @@ var TableHTML = {
 
 
 
-TableData.insert('Damir', 'Secki', 40);
-TableData.insert('Angela', 'Hernandez', 36);
-TableData.insert('Istok', 'Secki', 36);
-TableData.insert('Consuelo', 'Hernandez', 40);
+// TableData.insert('Damir', 'Secki', 40);
+// TableData.insert('Angela', 'Hernandez', 36);
+// TableData.insert('Istok', 'Secki', 36);
+// TableData.insert('Consuelo', 'Hernandez', 40);
 
-TableData.delete(2);
+// TableData.delete(2);
 
-TableData.insert('Angela', 'Hernandez', 36);
+// TableData.insert('Angela', 'Hernandez', 36);
 
-TableData.edit(5, {lastName: 'TEST'});
-TableData.edit(1, {age: 45});
-TableData.edit(11, {age: 45});
+// TableData.edit(5, {lastName: 'TEST'});
+// TableData.edit(1, {age: 45});
+// TableData.edit(11, {age: 45});
 
-// TableList.empty();
+// // TableList.empty();
 
-TableData.insert('Damir', 'Secki', 55);
-TableData.insert('Damir', 'AAAA', 1);
+// TableData.insert('Damir', 'Secki', 55);
+// TableData.insert('Damir', 'AAAA', 1);
 
-TableData.orderBy('id');
+// TableData.orderBy('id');
 
-console.log(TableData.data);
-console.log(TableData._order);
+// console.log(TableData.data);
+// console.log(TableData._order);
 
-console.log(TableData.data);
+// console.log(TableData.data);
 
-TableHTML.populate();
+
+var apiURL = 'https://world.openfoodfacts.org/api/v0/product/5449000054227.json';
+var request = new XMLHttpRequest();
+function reqListener () {
+    var data = JSON.parse(this.responseText);
+    product = data.product;
+    console.log(data.product);
+    TableData.insert(data.product.product_name, data.product.brands, 36);
+    // for(var i = 0; i < data.length; i++) {
+    //     var user = data[i];
+    //     TableData.insert(user.name, user.username, 36);
+    // }
+    TableHTML.populate();
+}
+
+var oReq = new XMLHttpRequest();
+oReq.addEventListener('load', reqListener,);
+oReq.open('GET', apiURL);
+oReq.send();
+
