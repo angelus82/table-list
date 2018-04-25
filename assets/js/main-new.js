@@ -50,8 +50,10 @@ var TableData = {
         this.data.sort(this['_sort_' + property]);
         if (this._order === property && !dontReverse) {
             this.data.reverse();
+            this._order = undefined;
+        } else {
+            this._order = property;
         }
-        this._order = property;
     },
     reorder(){
         if (!!this._order){
@@ -190,6 +192,7 @@ var TableHTML = {
     orderBy: function(property) {
         this._emptyHTMLTable();
         TableData.orderBy(property);
+        this.selectColumn(property);
         this.populate();
     },
     editRow: function(id, event) {
@@ -236,14 +239,50 @@ var TableHTML = {
         }
     },
 
+    selectColumn: function(property) {
+        // var container = document.querySelector('#left-panel > table');
+
+        // var cells = container.querySelectorAll('.sorted');
+        // console.log(cells);
+        // if(!!cells){
+        //     for (var i = 0; i < cells.length; i++) {
+        //         cells[i].classList.remove('sorted');
+        //     }
+        // }
+        var container = document.querySelector('#left-panel > table');
+        var rows = container.getElementsByTagName('TR');
+        window.setTimeout(function(){        
+            for (i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var ths = row.getElementsByTagName('TH');
+                var tds = row.getElementsByTagName('TD');
+
+                var cells = [];
+                for (var k = 0; k < ths.length; k++) {
+                    cells.push(ths[k]);
+                }
+                for (var k = 0; k < tds.length; k++) {
+                    cells.push(tds[k]);
+                }
+        
+                for (var j = 0; j < cells.length; j++) {
+                    cells[j].classList.remove('sorted');
+                    if (cells[j].classList.contains('col_' + property)){
+                        cells[j].classList.add('sorted');
+                    }
+                }
+            }
+        }, 0);
+    },
+
     /* ------- PRIVATE FUNCTIONS ------------*/
     _insertRow: function(item) {
         var row = `<tr onclick="TableHTML.editRow(` + item.id + `, event)">
-            <td>` + item.id + `</td>
-            <td>-</td>
-            <td>` + item.firstName + `</td>
-            <td>` + item.lastName + `</td>
-            <td>` + item.age + `</td>
+            <td class="col_id">` + item.id + `</td>
+            <td class="col_photo">-</td>
+            <td class="col_firstName">` + item.firstName + `</td>
+            <td class="col_lastName">` + item.lastName + `</td>
+            <td class="col_age">` + item.age + `</td>
             <td><button onclick="TableHTML.removeRow(` + item.id + `,event)" class="button red small action">X</button></td>
         </tr>`;
         this.tableEl.innerHTML =  this.tableEl.innerHTML + row;
@@ -273,13 +312,11 @@ TableData.edit(11, {age: 45});
 TableData.insert('Damir', 'Secki', 55);
 TableData.insert('Damir', 'AAAA', 1);
 
-TableData.orderBy('firstName');
+TableData.orderBy('id');
 
 console.log(TableData.data);
 console.log(TableData._order);
 
 console.log(TableData.data);
-
-
 
 TableHTML.populate();
