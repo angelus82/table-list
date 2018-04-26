@@ -1,6 +1,43 @@
+var API = {
+    _request: new XMLHttpRequest(),
+    _apiUrl: '',
+    setDataSource: function(dataSourceUrl){
+        this._apiUrl = dataSourceUrl;
+    },
+    load: function(onLoad){
+        if (typeof onLoad === 'function') {
+            this._request.addEventListener('load', onLoad);
+        }
+        this._request.open('GET', this._apiUrl);
+        this._request.send();
+    },
+    insert(obj, onSave){
+        this._request.open('POST', this._apiUrl, true);
+
+        this._request.setRequestHeader('Content-type','application/json; charset=utf-8');
+
+        this._request.send(JSON.stringify(obj));
+    }
+}
+
+
 var TableData = {
     data: [],
     _order: null,
+    _request: new XMLHttpRequest(),
+    load: function(){
+        var self = this;
+        API.load(function(){
+            data = JSON.parse(this.responseText);
+
+            for(var i = 0; i < data.length; i++) {
+                var user = data[i];
+                self.insert(user.firstName, user.lastName, user.age);
+            }
+
+            TableHTML.populate();
+        });
+    },
     insert: function(firstName, lastName, age){
         var item = {
             firstName: firstName,
@@ -135,6 +172,7 @@ var FormHTML = {
         };
 
         TableData.insert(item.firstName, item.lastName, item.age);
+        API.insert(item);
 
         TableHTML.populate();
         this.empty();
@@ -310,23 +348,16 @@ var TableHTML = {
 
 // console.log(TableData.data);
 
+// TableHTML.populate();
 
-var apiURL = 'https://world.openfoodfacts.org/api/v0/product/5449000054227.json';
-var request = new XMLHttpRequest();
-function reqListener () {
-    var data = JSON.parse(this.responseText);
-    product = data.product;
-    console.log(data.product);
-    TableData.insert(data.product.product_name, data.product.brands, 36);
-    // for(var i = 0; i < data.length; i++) {
-    //     var user = data[i];
-    //     TableData.insert(user.name, user.username, 36);
-    // }
-    TableHTML.populate();
-}
 
-var oReq = new XMLHttpRequest();
-oReq.addEventListener('load', reqListener,);
-oReq.open('GET', apiURL);
-oReq.send();
 
+
+API.setDataSource('http://localhost:3000/api/authors');
+TableData.load();
+
+// API.insert({
+//     firstName: 'test1',
+//     lastName: 'test1',
+//     age: 20
+// });
