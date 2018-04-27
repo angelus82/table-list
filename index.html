@@ -10,7 +10,8 @@
             </div>
 
             <div id="left-panel">
-                <table>
+                <div id="loading-indicator">Loading ...</div>
+                <table class="loading">
                     <thead>
                         <tr>
                             <th class="col_id sortable" onclick="TableHTML.orderBy('id')">Id</th>
@@ -18,7 +19,7 @@
                             <th class="col_firstName sortable" onclick="TableHTML.orderBy('firstName')">First Name</th>
                             <th class="col_lastName sortable" onclick="TableHTML.orderBy('lastName')">Last Name</th>
                             <th class="col_age sortable" onclick="TableHTML.orderBy('age')">Age</th>
-                            <th>-</th>
+                            <th><img src="assets/images/icon_refresh.png" width="24" onclick="TableData.load()"></th>
                         </tr>
                     </thead>
                     <tbody>

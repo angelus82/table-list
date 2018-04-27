@@ -102,10 +102,30 @@ h1{
     padding: 20px;
 }
 
+/* ------------------ LOADIG IDICATOR -------------------- */
+#loading-indicator{
+    margin-bottom: 10px;
+    background-image: url('../images/loader.gif');
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-color: transparent;
+    padding-left: 24px;
+    color: #BDBDBD;
+}
+
+#loading-indicator.hidden{
+    visibility: hidden;
+}
+
 /* --------------------- TABLE LIST ----------------------- */
 #left-panel table{
     width: 100%;
     border: 1px solid black;
+}
+
+#left-panel table.loading{
+    pointer-events: none;
+    cursor: pointer;
 }
 
 #left-panel table th{

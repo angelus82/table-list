@@ -1,12 +1,26 @@
+var LOADER = {
+    _element: document.getElementById('loading-indicator'),
+    show() {
+        this._element.classList.remove('hidden');
+    },
+    hide() {
+        this._element.classList.add('hidden');
+    }
+}
+
+
 var API = {
     _request: new XMLHttpRequest(),
     _apiUrl: '',
+    _onLoad: undefined,
     setDataSource: function(dataSourceUrl){
         this._apiUrl = dataSourceUrl;
     },
     load: function(onLoad){
         if (typeof onLoad === 'function') {
-            this._request.addEventListener('load', onLoad);
+            if (!this.onLoad) {
+                this._onLoad = this._request.addEventListener('load', onLoad);
+            }
         }
         this._request.open('GET', this._apiUrl);
         this._request.send();
@@ -25,10 +39,15 @@ var TableData = {
     data: [],
     _order: null,
     _request: new XMLHttpRequest(),
-    load: function(){
+    load: function(callback){
         var self = this;
+        TableHTML.setLoading();
+        TableHTML.empty();
+        LOADER.show();
         API.load(function(){
             data = JSON.parse(this.responseText);
+
+            console.log('DATA', data);
 
             for(var i = 0; i < data.length; i++) {
                 var user = data[i];
@@ -36,6 +55,8 @@ var TableData = {
             }
 
             TableHTML.populate();
+            TableHTML.stopLoading();
+            LOADER.hide();
         });
     },
     insert: function(firstName, lastName, age){
@@ -302,6 +323,15 @@ var TableHTML = {
                 }
             }
         }, 0);
+    },
+
+    setLoading: function(){
+        var table = document.querySelector('#left-panel > table');
+        table.classList.add('loading');
+    },
+    stopLoading: function() {
+        var table = document.querySelector('#left-panel > table');
+        table.classList.remove('loading');
     },
 
     /* ------- PRIVATE FUNCTIONS ------------*/
