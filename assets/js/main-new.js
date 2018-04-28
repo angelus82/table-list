@@ -10,27 +10,63 @@ var LOADER = {
 
 
 var API = {
-    _request: new XMLHttpRequest(),
     _apiUrl: '',
     _onLoad: undefined,
     setDataSource: function(dataSourceUrl){
         this._apiUrl = dataSourceUrl;
     },
     load: function(onLoad){
-        if (typeof onLoad === 'function') {
-            if (!this.onLoad) {
-                this._onLoad = this._request.addEventListener('load', onLoad);
-            }
-        }
-        this._request.open('GET', this._apiUrl);
-        this._request.send();
+        var _request = new XMLHttpRequest();
+
+        _request.open('GET', this._apiUrl);
+        _request.onload = function () {
+            if (typeof onLoad === 'function') {
+                onLoad(this.responseText);
+            };
+        };
+        _request.send();
     },
     insert(obj, onSave){
-        this._request.open('POST', this._apiUrl, true);
+        var _request = new XMLHttpRequest();
+        _request.open('POST', this._apiUrl, true);
 
-        this._request.setRequestHeader('Content-type','application/json; charset=utf-8');
+        _request.setRequestHeader('Content-type','application/json; charset=utf-8');
 
-        this._request.send(JSON.stringify(obj));
+        _request.onload = function(){
+            if (typeof onSave === 'function') {
+                onSave(this.responseText);
+            };
+        };
+
+        _request.send(JSON.stringify(obj));
+    },
+    delete(id, onDelete) {
+        var _request = new XMLHttpRequest();
+        _request.open('DELETE', this._apiUrl + '/' + id, true);
+
+        _request.setRequestHeader('Content-type','application/json; charset=utf-8');
+
+        _request.onload = function(){
+            if (typeof onDelete === 'function') {
+                onDelete(this.responseText);
+            };
+        };
+
+        _request.send();
+    },
+    update(obj, onUpdate) {
+        var _request = new XMLHttpRequest();
+        _request.open('PUT', this._apiUrl + '/' + obj.id, true);
+
+        _request.setRequestHeader('Content-type','application/json; charset=utf-8');
+
+        _request.onload = function(){
+            if (typeof onUpdate === 'function') {
+                onUpdate(this.responseText);
+            };
+        };
+
+        _request.send(JSON.stringify(obj));
     }
 }
 
@@ -44,14 +80,12 @@ var TableData = {
         TableHTML.setLoading();
         TableHTML.empty();
         LOADER.show();
-        API.load(function(){
-            data = JSON.parse(this.responseText);
-
-            console.log('DATA', data);
+        API.load(function(response){
+            data = JSON.parse(response);
 
             for(var i = 0; i < data.length; i++) {
                 var user = data[i];
-                self.insert(user.firstName, user.lastName, user.age);
+                self.insert(user.id, user.firstName, user.lastName, user.age);
             }
 
             TableHTML.populate();
@@ -59,50 +93,35 @@ var TableData = {
             LOADER.hide();
         });
     },
-    insert: function(firstName, lastName, age){
+    insert: function(id, firstName, lastName, age){
         var item = {
             firstName: firstName,
             lastName: lastName,
             age: age,
-            id: this._getNextId()
+            id: id
         };
 
         this.data.push(item);
         this.orderBy(this._order, true);
     },
-    delete: function(id) {
-        for(var i = 0; i < this.data.length; i++){
-            if (this.data[i].id === id){
-                //delete row
-                var index = this.data.indexOf(this.data[i]);
-                if (index > -1) {
-                    this.data.splice(index, 1);
-                }
+    delete: function(id, onDelete) {
+        API.delete(id, function(response){
+            if(typeof onDelete === 'function') {
+                onDelete(response);
             }
-        }
+        });
     },
     empty: function(){
         this.data = [];
     },
-    edit: function(id, obj){
-        for(var i = 0; i < this.data.length; i++) {
-
-            if (this.data[i].id === id) {
-                var item = this.data[i];
-                //edit data
-                var properties = Object.getOwnPropertyNames(obj);
-                for (var j = 0; j < properties.length; j++) {   
-                    var value = obj[properties[j]];
-                    var property = properties[j];
-
-                    console.log('PROPERTY: ' + property, 'VALUE: ' + value);
-
-                    if (!!item[property]) {
-                        item[property] = value;
-                    }
-                }
+    edit: function(obj, onUpdated){
+        var self = this;
+        API.update(obj, function(response){
+            self.load();
+            if(typeof onUpdated === 'function'){
+                onUpdated(response);
             }
-        }
+        });
     },
     orderBy: function(property, dontReverse) {
         this.data.sort(this['_sort_' + property]);
@@ -208,14 +227,16 @@ var FormHTML = {
             firstName: this.firstNameEl.value,
             lastName: this.lastNameEl.value,
             age: parseInt(this.ageEl.value, 10),
-            id: parseInt(this.idEl.value, 10)
+            id: this.idEl.value
         };
         console.log('ITEM ID:', item.id);
-        TableData.edit(item.id, item);
-        console.log(TableData.data);
-        this.empty();
-        TableData.reorder();
-        TableHTML.populate();
+        TableData.edit(item, function(){
+            // console.log(TableData.data);
+            // this.empty();
+            // TableData.reorder();
+            // TableHTML.populate();
+        });
+       
 
         return false;
     }
@@ -282,12 +303,13 @@ var TableHTML = {
                     return;
                 }                
                 // WE CAN DELETE
-                self.tableEl.removeChild(me);
-                TableData.delete(id);
+                TableData.delete(id, function(response){
+                    self.tableEl.removeChild(me);
+                });
+                
             }, 50);
-
-            
         }
+        return false;
     },
 
     deselectAll: function() {
@@ -336,13 +358,12 @@ var TableHTML = {
 
     /* ------- PRIVATE FUNCTIONS ------------*/
     _insertRow: function(item) {
-        var row = `<tr onclick="TableHTML.editRow(` + item.id + `, event)">
-            <td class="col_id">` + item.id + `</td>
+        var row = `<tr onclick="TableHTML.editRow('` + item.id + `', event)">
             <td class="col_photo">-</td>
             <td class="col_firstName">` + item.firstName + `</td>
             <td class="col_lastName">` + item.lastName + `</td>
             <td class="col_age">` + item.age + `</td>
-            <td><button onclick="TableHTML.removeRow(` + item.id + `,event)" class="button red small action">X</button></td>
+            <td><button onclick="TableHTML.removeRow('` + item.id + `',event)" class="button red small action">X</button></td>
         </tr>`;
         this.tableEl.innerHTML =  this.tableEl.innerHTML + row;
     },
@@ -352,42 +373,14 @@ var TableHTML = {
 }
 
 
-
-// TableData.insert('Damir', 'Secki', 40);
-// TableData.insert('Angela', 'Hernandez', 36);
-// TableData.insert('Istok', 'Secki', 36);
-// TableData.insert('Consuelo', 'Hernandez', 40);
-
-// TableData.delete(2);
-
-// TableData.insert('Angela', 'Hernandez', 36);
-
-// TableData.edit(5, {lastName: 'TEST'});
-// TableData.edit(1, {age: 45});
-// TableData.edit(11, {age: 45});
-
-// // TableList.empty();
-
-// TableData.insert('Damir', 'Secki', 55);
-// TableData.insert('Damir', 'AAAA', 1);
-
-// TableData.orderBy('id');
-
-// console.log(TableData.data);
-// console.log(TableData._order);
-
-// console.log(TableData.data);
-
-// TableHTML.populate();
-
-
-
-
 API.setDataSource('http://localhost:3000/api/authors');
 TableData.load();
 
-// API.insert({
-//     firstName: 'test1',
-//     lastName: 'test1',
-//     age: 20
-// });
+
+// setTimeout(function(){
+//     API.insert({
+//         firstName: 'test1',
+//         lastName: 'test1',
+//         age: 20
+//     });
+// }, 2000);
