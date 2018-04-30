@@ -32,13 +32,13 @@
                     <p>Please enter the user's information</p>
                     
                     <h5>First name</h5>
-                    <input type="text" name="first_name">
+                    <input type="text" name="first_name" minlength="2" required>
 
                     <h5>Last name</h5>
-                    <input type="text" name="last_name">
+                    <input type="text" name="last_name" minlength="2" required>
 
                     <h5>Age</h5>
-                    <input type="text" name="age">
+                    <input type="number" name="age" max="120" min="6" required>
 
                     <input type="hidden" name="id">
 
