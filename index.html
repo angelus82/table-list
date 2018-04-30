@@ -5,26 +5,36 @@
     </head>
     <body>
         <div id="main">
+
             <div id="head-panel">
-                <h1>List of names</h1>
+                <h1>{{title}}</h1>
             </div>
 
             <div id="left-panel">
-                <div id="loading-indicator">Loading ...</div>
-                <table class="loading">
+
+                <div v-if="isLoading" id="loading-indicator">Loading ...</div>
+                <table v-class.loading="isLoading">
                     <thead>
                         <tr>
                             <th class="col_photo">Photo</th>
-                            <th class="col_firstName sortable" onclick="TableHTML.orderBy('firstName')">First Name</th>
-                            <th class="col_lastName sortable" onclick="TableHTML.orderBy('lastName')">Last Name</th>
-                            <th class="col_age sortable" onclick="TableHTML.orderBy('age')">Age</th>
-                            <th><img src="assets/images/icon_refresh.png" width="24" onclick="TableData.load()"></th>
+                            <th class="col_firstName sortable" v-on:click="reload('firstName', $event)">First Name</th>
+                            <th class="col_lastName sortable" v-on:click="reload('lastName', $event)">Last Name</th>
+                            <th class="col_age sortable" v-on:click="reload('age', $event)">Age</th>
+                            <th><img src="assets/images/icon_refresh.png" width="24" v-on:click="reload(null, $event)"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        
+                        <tr v-for="item in list">
+                            <td class="col_photo">-</td>
+                            <td v-class.sorted="sortBy === 'firstName'">{{item.firstName}}</td>
+                            <td class="col_lastName">{{item.lastName}}</td>
+                            <td class="col_age">{{item.age}}</td>
+                            <td><button class="button red small action">X</button></td>
+                        </tr>
                     </tbody>
                 </table>
+
+                <a href="#" v-on:click="test">TEST</a>
             </div>
 
             <div id="right-panel">
@@ -49,5 +59,8 @@
             </div>
         </div>
     </body>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    
     <script src="assets/js/main-new.js"></script>
 </html>

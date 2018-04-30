@@ -373,8 +373,8 @@ var TableHTML = {
 }
 
 
-API.setDataSource('http://localhost:3000/api/authors');
-TableData.load();
+// API.setDataSource('http://localhost:3000/api/authors');
+// TableData.load();
 
 
 // setTimeout(function(){
@@ -384,3 +384,58 @@ TableData.load();
 //         age: 20
 //     });
 // }, 2000);
+
+
+var app = new Vue({
+    el: '#main',
+    data: {
+        title: 'List of names',
+        isLoading: true,
+        sortBy: undefined,
+        list: []
+    },
+    methods: {
+        insert(){
+
+        },
+        reload(sortBy, event){
+            this.isLoading = true;
+            var direction = 'ASC';
+            if (!sortBy) {
+                sortBy = this.sortBy;
+            } else {
+                if (sortBy === this.sortBy) {
+                    direction = 'DESC';
+                    this.sortBy = undefined;
+                } else {
+                    this.sortBy = sortBy;
+                }
+            }
+
+            console.log('DIRECTION', direction);
+
+            var filter = {};
+            if (!!sortBy) {
+                filter = {"order": sortBy + ' ' + direction};
+            }
+
+            axios.get('http://localhost:3000/api/authors'+ '?'+'filter=' + JSON.stringify(filter))
+            .then(response => {
+                this.list = response.data;
+                this.isLoading = false;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            if(!!event){
+                event.preventDefault();
+            }
+        },
+        test(){
+            console.log('TESTG');
+        }
+    },
+    mounted() {
+        this.reload();
+    }
+})
